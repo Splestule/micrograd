@@ -47,10 +47,13 @@ class Value:
         return self * other
     
     def __sub__(self, other):
-        return self + -1*other
+        return self + (-other)
     
     def __rsub__(self, other):
-        return -1*self + other
+        return (-self) + other
+    
+    def __neg__(self):
+        return -1*self
 
     def __pow__(self, x):
         out = Value(self.data**x, (self,))
