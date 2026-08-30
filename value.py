@@ -16,8 +16,8 @@ class Value:
         out = Value(self.data + other.data, (self, other))
         
         def _backward():
-            self.grad = out.grad
-            other.grad = out.grad
+            self.grad += out.grad
+            other.grad += out.grad
         out._backward = _backward
         
         return out
@@ -30,22 +30,44 @@ class Value:
         out = Value(self.data*other.data, (self, other))
         
         def _backward():
-            other.grad = self.data * out.grad
-            self.grad = other.data * out.grad
+            other.grad += self.data * out.grad
+            self.grad += other.data * out.grad
         out._backward = _backward
         
         return out
     
+    def __truediv__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
+        return self * other**-1
+    
+    def __rtruediv__(self, other):
+        return self**-1 * other
+    
     def __rmul__(self, other):
         return self * other
+    
+    def __sub__(self, other):
+        return self + -1*other
+    
+    def __rsub__(self, other):
+        return -1*self + other
+
+    def __pow__(self, x):
+        out = Value(self.data**x, (self,))
+        
+        def _backward():
+            self.grad += x * self.data**(x-1) * out.grad
+        out._backward = _backward
+        
+        return out
 
     def tanh(self):
         e = math.exp(2*self.data)
         t = (e-1)/(e+1)
-        out = Value(t, (self))
+        out = Value(t, (self,))
         
         def _backward():
-            self.grad =  1 - t**2 * out.grad
+            self.grad +=  (1 - t**2) * out.grad
         out._backward = _backward
         
         return out
@@ -60,14 +82,9 @@ class Value:
                 for child in node._prev:
                     topo_build(child)
                 topo.append(node)
-        queue = reversed(topo_build(self))
+        topo_build(self,)
+        queue = reversed(topo)
         self.grad = 1.0
         for node in queue:
             assert isinstance(node, Value)
             node._backward()
-            
-        
-        
-a = Value(7.0)
-b = Value(-7.0)
-print(9*b)
