@@ -3,10 +3,9 @@ from value import Value
 
 class Neuron:
     def __init__(self, nin):
-        rng = np.random
         self.nin = nin
-        self.w = [Value(rng.uniform(-1,1)) for _ in range(self.nin)]
-        self.b = Value(rng.uniform(-1,1))
+        self.w = [Value(np.random.uniform(-1,1)) for _ in range(self.nin)]
+        self.b = Value(np.random.uniform(-1,1))
         
     def parameters(self): return self.w + [self.b]
 
@@ -37,7 +36,7 @@ class MLP:
     def parameters(self): return [p for l in self.layers for p in l.parameters()]
             
     def __call__(self, xs=None):
-        assert isinstance(xs, list) and len(xs) == self.nin
+        assert len(xs) == self.nin
         activations = xs.copy()
         for layer in self.layers:
             activations = layer(activations)
@@ -59,14 +58,3 @@ class MLP:
             for parameter in self.parameters():
                 parameter.data -= learning_rate*parameter.grad
         return loss
-                        
-                        
-xs = [[.5, .2, .6, .9, .5], [.5, .9, .4, .2, .1], [.9, .8, .11, .3, .4]]
-ys = [[.1, -.5, .8, .4, .5], [.9, -.8, .4, .7, .6], [-.5, -.6, .4, .4, -.5]]
-    
-nn = MLP(5, [7, 8, 7, 5])
-print(nn.train(2000, 0.1, xs, ys))
-
-for x in xs:
-    output = nn(x)
-    print(x, output)
