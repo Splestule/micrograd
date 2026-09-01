@@ -1,5 +1,5 @@
 from sklearn.datasets import make_moons
-from nn import Neuron, Layer, MLP
+from nn import MLP
 import numpy as np
 import matplotlib.pyplot as plt
 
