@@ -1,7 +1,0 @@
-{
-    "github.copilot.editor.enableCodeActions": false,
-    "C_Cpp.copilotHover": "disabled",
-    "github.copilot.renameSuggestions.triggerAutomatically": false,
-    "github.copilot.chat.codeGeneration.useInstructionFiles": false,
-    "github.copilot.chat.edits.codesearch.enabled": false
-}
